@@ -126,8 +126,13 @@ function unlockAudio() {
     }
 }
 
-// API endpoints (relative paths work on server, fall back to localhost for file:// testing)
-const API_BASE = window.location.protocol === 'file:' ? 'http://127.0.0.1:8001/api' : '/api';
+// API endpoints — auto-detects environment
+const RENDER_BACKEND_URL = 'https://kyr-legal-assistant.onrender.com'; // ← will be set after Render deploy
+const API_BASE = window.location.protocol === 'file:'
+    ? 'http://127.0.0.1:8001/api'
+    : (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
+        ? '/api'
+        : `${RENDER_BACKEND_URL}/api`;
 
 // Markdown simple parser for bold text (Law citations)
 function parseMarkdown(text) {
