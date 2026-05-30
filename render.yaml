@@ -2,20 +2,9 @@ services:
   - type: web
     name: kyr-legal-assistant
     env: python
-    buildCommand: pip install -r requirements-cloud.txt
+    plan: free
+    buildCommand: pip install fastapi uvicorn python-multipart python-dotenv numpy google-generativeai gTTS SpeechRecognition scikit-learn
     startCommand: uvicorn api:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: LIGHTWEIGHT_MODE
         value: "true"
-      - key: GEMINI_API_KEY
-        sync: false
-      - key: SMTP_EMAIL
-        sync: false
-      - key: SMTP_PASSWORD
-        sync: false
-      - key: TWILIO_ACCOUNT_SID
-        sync: false
-      - key: TWILIO_AUTH_TOKEN
-        sync: false
-      - key: TWILIO_WHATSAPP_FROM
-        sync: false
