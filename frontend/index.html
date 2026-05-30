@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KYR Legal Assistant</title>
+    <meta name="description" content="Know Your Rights (KYR) multilingual voice-enabled legal assistant chatbot for Indian laws. Learn about your rights under IPC, BNS, CrPC, and Labor Laws.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Google AdSense - Replace ca-pub-XXXXXXXXXXXXXXXX with your Publisher ID after approval -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+    <link rel="stylesheet" href="style-v2.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#121212">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Mock WhatsApp Toast Notification -->
+        <div id="mockToast" class="mock-toast hidden">
+            <div class="mock-toast-icon">
+                <i class="fa-brands fa-whatsapp"></i>
+            </div>
+            <div class="mock-toast-content">
+                <span class="mock-toast-title">WhatsApp Verification</span>
+                <span class="mock-toast-body">Your KYR verification code is <span id="mockToastOtp" class="mock-toast-otp">123456</span></span>
+            </div>
+            <button id="closeToastBtn" class="mock-toast-close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- Login Screen Overlay -->
+        <div id="loginScreen" class="login-screen">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-logo">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <h2>KYR Legal Assistant</h2>
+                    <p id="loginCardSubtitle">Verify your identity to proceed</p>
+                </div>
+                
+                <div id="loginError" class="login-error hidden">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span id="errorMessage">Invalid inputs.</span>
+                </div>
+
+                <!-- Step 1: Identifier Input Panel -->
+                <div id="identifierPanel" class="login-panel">
+                    <div class="login-form-group">
+                        <label for="loginIdentifier">Email or Phone Number</label>
+                        <div class="input-with-icon">
+                            <input type="text" id="loginIdentifier" class="login-input" placeholder="e.g. user@example.com or 9876543210" required>
+                            <i class="fa-solid fa-envelope-open-text"></i>
+                        </div>
+                    </div>
+                    <button id="sendOtpBtn" class="login-btn" style="width: 100%; margin-top: 16px;">
+                        <span>Continue</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Step 2: OTP Verification Panel -->
+                <div id="otpPanel" class="login-panel hidden">
+                    <div class="login-form-group">
+                        <label>Enter 6-Digit OTP</label>
+                        <div class="otp-container">
+                            <input type="text" maxlength="1" class="otp-box" id="otp-1">
+                            <input type="text" maxlength="1" class="otp-box" id="otp-2">
+                            <input type="text" maxlength="1" class="otp-box" id="otp-3">
+                            <input type="text" maxlength="1" class="otp-box" id="otp-4">
+                            <input type="text" maxlength="1" class="otp-box" id="otp-5">
+                            <input type="text" maxlength="1" class="otp-box" id="otp-6">
+                        </div>
+                    </div>
+                    <button id="verifyOtpBtn" class="login-btn" style="width: 100%; margin-top: 16px;">
+                        <span>Verify & Login</span> <i class="fa-solid fa-check"></i>
+                    </button>
+                    <p class="resend-text">Didn't receive code? <span id="resendOtpBtn" class="resend-link">Resend OTP</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header id="mainHeader" class="glass-header hidden">
+            <div class="header-content">
+                <div class="avatar">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+                <div class="header-info">
+                    <h1 id="headerTitle">Legal Assistant</h1>
+                    <span id="headerStatus" class="status">Online • KYR AI</span>
+                </div>
+                <div class="header-actions">
+                    <button id="settingsBtn"><i class="fa-solid fa-gear"></i></button>
+                </div>
+            </div>
+            <!-- Settings Panel (Hidden by default) -->
+            <div id="settingsPanel" class="settings-panel hidden">
+                <div class="settings-item">
+                    <label id="langLabel">Language:</label>
+                    <select id="langSelect">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी (Hindi)</option>
+                        <option value="ta">தமிழ் (Tamil)</option>
+                    </select>
+                </div>
+                <div class="settings-item">
+                    <label id="aiLabel">AI Priority Mode:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="aiToggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <button id="clearChatBtn" class="danger-btn"><i class="fa-solid fa-trash"></i> Clear Chat</button>
+                <button id="logoutBtn" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </div>
+        </header>
+
+        <!-- Chat Area -->
+        <main id="chatbox" class="chat-area hidden">
+            <div class="message-wrapper system">
+                <div class="message glass-bubble">
+                    <p id="welcomeMessage">Hi! I am your KYR Legal Assistant.<br>Ask me about your rights (e.g., Arrest, FIR, or even Ragging in college!).</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Ad Banner (bottom, always visible) -->
+        <div id="adBanner" class="ad-banner-container">
+            <!-- OPTION A: Google AdSense unit (uncomment after publisher ID approval) -->
+            <!--
+            <ins class="adsbygoogle ad-unit"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            -->
+
+            <!-- OPTION B: Placeholder banner (shown now, remove when AdSense is live) -->
+            <div class="ad-placeholder" id="adPlaceholder">
+                <span class="ad-label">Advertisement</span>
+                <div class="ad-placeholder-content">
+                    <i class="fa-solid fa-gavel"></i>
+                    <div class="ad-placeholder-text">
+                        <strong>Need a Lawyer?</strong>
+                        <span>Find verified legal experts near you — quick consultation, expert advice.</span>
+                    </div>
+                    <a href="#" class="ad-cta-btn" id="adCtaBtn">Get Help →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <footer id="mainFooter" class="glass-footer hidden">
+            <div class="input-container">
+                <button id="micBtn" class="action-btn mic-btn"><i class="fa-solid fa-microphone"></i></button>
+                <input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off">
+                <button id="sendBtn" class="action-btn send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="app.js?v=1.0.9"></script>
+    <script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('SW registered: ', registration);
+                }).catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

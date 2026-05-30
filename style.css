@@ -1,0 +1,247 @@
+/* WhatsApp Web Theme for Streamlit */
+
+/* 1. Global Reset & Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    background-color: #e5ddd5 !important;
+    /* WhatsApp Default BG */
+    background-image: linear-gradient(135deg, #e5ddd5 25%, transparent 25%) !important;
+    background-size: 20px 20px;
+}
+
+/* Hide Streamlit Header/Footer/Menu */
+/* header {
+    visibility: hidden;
+}
+
+#MainMenu {
+    visibility: hidden;
+} */
+
+footer {
+    visibility: hidden;
+}
+
+.stApp {
+    margin-top: -80px;
+    /* Pull up to hide white space from hidden header */
+    background-color: #efe7dd;
+    /* Fallback beige */
+}
+
+/* 2. Custom Header */
+.whatsapp-header {
+    background-color: #008069;
+    /* WhatsApp Teal */
+    color: white;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    height: 60px;
+}
+
+.header-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border-radius: 50%;
+    margin-right: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+}
+
+.header-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-name {
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.header-status {
+    font-size: 11px;
+    opacity: 0.9;
+}
+
+/* 3. Chat Area Adjustments */
+/* Move main content down below fixed header */
+.main .block-container {
+    padding-top: 80px !important;
+    padding-bottom: 100px !important;
+    max-width: 900px;
+}
+
+/* 4. Message Bubbles */
+/* Streamlit's st.chat_message container */
+[data-testid="stChatMessage"] {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 10px 0 !important;
+    gap: 0.5rem;
+}
+
+/* User Message (Right, Green) */
+.user-message {
+    justify-content: flex-end;
+}
+
+[data-testid="stChatMessage"] .stMarkdown {
+    /* Base bubble style */
+    padding: 8px 12px;
+    border-radius: 7.5px;
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+    position: relative;
+    max-width: 80%;
+    display: inline-block;
+}
+
+/* Target the specific background for user */
+[data-testid="stChatMessage"][data-testid="stChatMessageUser"] {
+    flex-direction: row-reverse;
+    /* Streamlit does this, but ensure right align */
+}
+
+/* HACK: We can't target user/assistant distinctively purely by class in all ST versions easily 
+   without inspecting the avatar content, but st.chat_message("user") usually applies a specific order.
+   We will treat the 'user' logic in Python to wrap content in a div class if needed, 
+   OR rely on Streamlit's native 'avatar' layout which puts user on right usually? 
+   Actually Streamlit puts everyone on left. We need flex-direction: row-reverse for User.
+*/
+
+/* 
+   IMPORTANT: Streamlit DOM structure is complex. 
+   We will inject HTML/CSS via st.markdown(unsafe_allow_html=True) inside the loop for precise control,
+   OR we try to hack existing classes.
+   
+   Better approach for Streamlit: 
+   Let Streamlit handle the avatar. We just style the bubble background.
+   Default: Transparent.
+   We use :nth-child or similar if possible? No.
+   
+   Strategy: We'll overwrite the 'background-color' of the message content div.
+   User = #dcf8c6 (Light Green)
+   Assistant = #ffffff (White)
+*/
+
+/* Assistant Bubble */
+[data-testid="stChatMessageAvatarAssistant"]+[data-testid="stChatMessageContent"] {
+    background-color: #ffffff;
+    border-radius: 0px 10px 10px 10px;
+    margin-left: 10px;
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+}
+
+/* User Bubble */
+[data-testid="stChatMessageAvatarUser"]+[data-testid="stChatMessageContent"] {
+    background-color: #dcf8c6;
+    border-radius: 10px 0px 10px 10px;
+    margin-right: 10px;
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+}
+
+/* FORCE TEXT COLOR TO BLACK for readability on customization */
+[data-testid="stChatMessageContent"] .stMarkdown,
+[data-testid="stChatMessageContent"] p {
+    color: #000000 !important;
+}
+
+/* Avatar Fixes */
+[data-testid="stChatMessageAvatarAssistant"] {
+    background-color: transparent !important;
+}
+
+[data-testid="stChatMessageAvatarUser"] {
+    background-color: transparent !important;
+}
+
+/* 5. Input Area */
+/* Make space for the fixed audio/chat widgets */
+.input-spacer {
+    height: 100px;
+}
+
+[data-testid="stChatInput"] {
+    background-color: #f0f2f5;
+    padding-bottom: 20px;
+}
+
+/* Audio Input Positioning */
+/* We target the audio input widget - this is tricky as class names change */
+/* Audio Input Positioning - WhatsApp Style */
+[data-testid="stAudioInput"] {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px !important;
+    height: 50px !important;
+    z-index: 1001;
+    background-color: #ffffff;
+    /* White Background */
+    border-radius: 50%;
+    padding: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    /* Hide overflow text */
+}
+
+/* Hide the label and internal text, but keep the icon visible if possible. 
+   Streamlit's audio input is a complex widget. 
+   We will try to target the button inside if we can, or just rely on the container.
+   Actually, st.audio_input renders a button. 
+*/
+
+[data-testid="stAudioInput"] button {
+    background-color: transparent !important;
+    border: none !important;
+    color: #00a884 !important;
+    /* Green Icon */
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Specific fix for the SVG icon color */
+[data-testid="stAudioInput"] svg,
+[data-testid="stAudioInput"] svg path,
+[data-testid="stAudioInput"] svg circle,
+[data-testid="stAudioInput"] button svg {
+    fill: #00a884 !important;
+    /* Green Icon */
+    stroke: #00a884 !important;
+    color: #00a884 !important;
+}
+
+[data-testid="stAudioInput"] label {
+    display: none;
+}
+
+/* Settings Expander Text Color */
+[data-testid="stExpanderDetails"] *,
+[data-testid="stExpander"] * {
+    color: #000000 !important;
+}
+
+/* Force Clear Chat and Ask AI buttons (Primary type) to have white font */
+[data-testid="baseButton-primary"] p,
+[data-testid="baseButton-primary"] span,
+[data-testid="baseButton-primary"] div,
+[data-testid="baseButton-primary"] {
+    color: #ffffff !important;
+}
