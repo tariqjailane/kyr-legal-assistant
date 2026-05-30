@@ -1,0 +1,9 @@
+python-dotenv
+numpy
+scikit-learn
+google-generativeai
+fastapi
+uvicorn
+python-multipart
+gTTS
+SpeechRecognition

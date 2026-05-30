@@ -2,9 +2,11 @@ services:
   - type: web
     name: kyr-legal-assistant
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements-cloud.txt
     startCommand: uvicorn api:app --host 0.0.0.0 --port $PORT
     envVars:
+      - key: LIGHTWEIGHT_MODE
+        value: "true"
       - key: GEMINI_API_KEY
         sync: false
       - key: SMTP_EMAIL
